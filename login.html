@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group input[type="radio"] {
+            margin-right: 10px;
+        }
+        .form-group label {
+            display: inline-block;
+            margin-right: 20px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .error-message {
+            color: rgb(255, 0, 0);
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="radio" name="userType" value="admin" checked>
+                    Admin
+                </label>
+                <label>
+                    <input type="radio" name="userType" value="staff">
+                    Staff
+                </label>
+                <label>
+                    <input type="radio" name="userType" value="student">
+                    Student
+                </label>
+            </div>
+            <div class="form-group">
+                <button type="submit">Login</button>
+            </div>
+            <div class="error-message" id="error-message"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var userType = document.querySelector('input[name="userType"]:checked').value;
+            var errorMessage = document.getElementById('error-message');
+
+            // Retrieve stored lists from localStorage
+            var staffList = JSON.parse(localStorage.getItem('staffMembers')) || [];
+            var studentList = JSON.parse(localStorage.getItem('students')) || [];
+
+            // Function to validate login details
+            function validateLogin(username, password, userType) {
+                if (userType === 'admin') {
+                    return username === 'admin' && password === 'admin123';
+                } else if (userType === 'staff') {
+                    // Check against stored staff credentials
+                    return staffList.find(staff => {
+                        if (staff.email === username && staff.password === password) {
+                            // Store staff course in localStorage for later use
+                            localStorage.setItem('loggedInStaffCourse', staff.course);
+                            localStorage.setItem('loggedInStaffName', staff.name); // Store staff name
+                            return true;
+                        }
+                        return false;
+                    });
+                } else if (userType === 'student') {
+                    // Check against stored student credentials
+                    return studentList.find(student => {
+                        if (student.email === username && student.password === password) {
+                            // Store student name in localStorage for later use
+                            localStorage.setItem('loggedInStudentName', student.name); // Store student name
+                            return true;
+                        }
+                        return false;
+                    });
+                }
+                return false;
+            }
+
+            // Validate login
+            if (validateLogin(username, password, userType)) {
+                // Redirect based on user type
+                if (userType === 'admin') {
+                    window.location.href = 'admin_dashboard.html';
+                } else if (userType === 'staff') {
+                    window.location.href = 'staff_dashboard.html';
+                } else if (userType === 'student') {
+                    window.location.href = 'student_dashboard.html';
+                }
+            } else {
+                // Show error message
+                errorMessage.textContent = 'Invalid login details. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>

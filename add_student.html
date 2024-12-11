@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Student</h1>
+        <form id="addStudentForm">
+            <div class="form-group">
+                <label for="studentName">Name</label>
+                <input type="text" id="studentName" name="studentName" required>
+            </div>
+            <div class="form-group">
+                <label for="studentEmail">Email</label>
+                <input type="email" id="studentEmail" name="studentEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="studentCourse">Course</label>
+                <select id="studentCourse" name="studentCourse" required>
+                    <option value="">Select Course</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="studentPassword">Password</label>
+                <input type="password" id="studentPassword" name="studentPassword" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Student</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate course options
+            var courseSelect = document.getElementById('studentCourse');
+            var courses = JSON.parse(localStorage.getItem('courses')) || [];
+            
+            courses.forEach(function(course) {
+                var option = document.createElement('option');
+                option.value = course;
+                option.textContent = course;
+                courseSelect.appendChild(option);
+            });
+
+            // Form submission
+            document.getElementById('addStudentForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var studentName = document.getElementById('studentName').value;
+                var studentEmail = document.getElementById('studentEmail').value;
+                var studentCourse = document.getElementById('studentCourse').value;
+                var studentPassword = document.getElementById('studentPassword').value;
+
+                // Retrieve existing students from localStorage
+                var students = JSON.parse(localStorage.getItem('students')) || [];
+                
+                // Add new student
+                students.push({ name: studentName, email: studentEmail, course: studentCourse, password: studentPassword });
+                
+                // Save updated list back to localStorage
+                localStorage.setItem('students', JSON.stringify(students));
+                
+                alert('Student added successfully!');
+                
+                // Clear form fields
+                document.getElementById('addStudentForm').reset();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Staff</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Staff</h1>
+        <form id="addStaffForm">
+            <div class="form-group">
+                <label for="staffName">Name</label>
+                <input type="text" id="staffName" name="staffName" required>
+            </div>
+            <div class="form-group">
+                <label for="staffEmail">Email</label>
+                <input type="email" id="staffEmail" name="staffEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="staffCourse">Course</label>
+                <select id="staffCourse" name="staffCourse" required>
+                    <option value="">Select Course</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="staffPassword">Password</label>
+                <input type="password" id="staffPassword" name="staffPassword" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">submit</button>
+            </div>
+            </div>
+                <a href="admin_dashboard.html">Go to admin-dashboard</a>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate course options
+            var courseSelect = document.getElementById('staffCourse');
+            var courses = JSON.parse(localStorage.getItem('courses')) || [];
+            
+            courses.forEach(function(course) {
+                var option = document.createElement('option');
+                option.value = course;
+                option.textContent = course;
+                courseSelect.appendChild(option);
+            });
+
+            // Form submission
+            document.getElementById('addStaffForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var staffName = document.getElementById('staffName').value;
+                var staffEmail = document.getElementById('staffEmail').value;
+                var staffCourse = document.getElementById('staffCourse').value;
+                var staffPassword = document.getElementById('staffPassword').value;
+
+                // Retrieve existing staff from localStorage
+                var staffMembers = JSON.parse(localStorage.getItem('staffMembers')) || [];
+                
+                // Add new staff
+                staffMembers.push({ name: staffName, email: staffEmail, course: staffCourse, password: staffPassword });
+                
+                // Save updated list back to localStorage
+                localStorage.setItem('staffMembers', JSON.stringify(staffMembers));
+                
+                alert('Staff added successfully!');
+                
+                // Clear form fields
+                document.getElementById('addStaffForm').reset();
+            });
+        });
+    </script>
+</body>
+</html>

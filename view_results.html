@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .result {
+            margin-bottom: 15px;
+        }
+        .result label {
+            font-weight: bold;
+        }
+        .average {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Results</h1>
+        <div id="resultsContainer"></div>
+        <a href="student_dashboard.html" class="nav-link">Back to Dashboard</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var loggedInStudentName = localStorage.getItem('loggedInStudentName'); // Retrieve the logged-in student's name
+            var resultsContainer = document.getElementById('resultsContainer');
+            var results = JSON.parse(localStorage.getItem('results')) || []; // Retrieve results
+
+            // Filter results for the logged-in student based on name
+            var studentResults = results.filter(result => result.studentName === loggedInStudentName);
+
+            if (studentResults.length > 0) {
+                studentResults.forEach(result => {
+                    var resultDiv = document.createElement('div');
+                    resultDiv.className = 'result';
+
+                    // Calculate average of IA1, IA2, and IA3
+                    var ia1 = parseFloat(result.ia1);
+                    var ia2 = parseFloat(result.ia2);
+                    var ia3 = parseFloat(result.ia3);
+                    var average = ((ia1 + ia2 + ia3) / 3).toFixed(2);
+
+                    resultDiv.innerHTML = `
+                        <p><strong>Subject:</strong> ${result.subject}</p>
+                        <p><strong>IA1:</strong> ${result.ia1}</p>
+                        <p><strong>IA2:</strong> ${result.ia2}</p>
+                        <p><strong>IA3:</strong> ${result.ia3}</p>
+                        <p><strong>Attendance:</strong> ${result.attendance}%</p>
+                        <p class="average"><strong>Average IA Score:</strong> ${average}</p>
+                    `;
+                    resultsContainer.appendChild(resultDiv);
+                });
+            } else {
+                resultsContainer.innerHTML = '<p>No results found.</p>';
+            }
+        });
+    </script>
+</body>
+</html>

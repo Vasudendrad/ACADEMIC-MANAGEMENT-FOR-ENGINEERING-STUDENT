@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group select,
+        .form-group input[type="number"],
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .form-group button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .form-group button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .error-message {
+            color: rgb(255, 0, 0);
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        .result-display {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Result</h1>
+        <form id="addResultForm">
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <select id="studentName" name="studentName" required>
+                    <option value="">Select Student</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="subjectName">Subject</label>
+                <input type="text" id="subjectName" name="subjectName" required>
+            </div>
+            <div class="form-group">
+                <label for="ia1">IA1</label>
+                <input type="number" id="ia1" name="ia1" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label for="ia2">IA2</label>
+                <input type="number" id="ia2" name="ia2" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label for="ia3">IA3</label>
+                <input type="number" id="ia3" name="ia3" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label for="attendance">Attendance (%)</label>
+                <input type="number" id="attendance" name="attendance" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Add Result</button>
+            </div>
+            <div class="error-message" id="error-message"></div>
+        </form>
+        <div class="result-display" id="resultDisplay"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var studentNameSelect = document.getElementById('studentName');
+            var resultDisplay = document.getElementById('resultDisplay');
+            var students = JSON.parse(localStorage.getItem('students')) || [];
+            var loggedInStaffCourse = localStorage.getItem('loggedInStaffCourse'); // Retrieve logged-in staff course
+            
+            // Populate student dropdown with names matching the staff's course
+            students.forEach(function(student) {
+                if (student.course === loggedInStaffCourse) {
+                    var option = document.createElement('option');
+                    option.value = student.name;
+                    option.textContent = student.name;
+                    studentNameSelect.appendChild(option);
+                }
+            });
+
+            // Handle form submission
+            document.getElementById('addResultForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var studentName = studentNameSelect.value;
+                var subjectName = document.getElementById('subjectName').value;
+                var ia1 = document.getElementById('ia1').value;
+                var ia2 = document.getElementById('ia2').value;
+                var ia3 = document.getElementById('ia3').value;
+                var attendance = document.getElementById('attendance').value;
+
+                // Check if a student is selected
+                if (!studentName) {
+                    document.getElementById('error-message').textContent = 'Please select a student.';
+                    return;
+                }
+
+                // Retrieve results from localStorage
+                var results = JSON.parse(localStorage.getItem('results')) || [];
+
+                // Add new result
+                results.push({
+                    studentName: studentName,
+                    subject: subjectName,
+                    ia1: ia1,
+                    ia2: ia2,
+                    ia3: ia3,
+                    attendance: attendance
+                });
+
+                // Save updated results to localStorage
+                localStorage.setItem('results', JSON.stringify(results));
+
+                // Display success message
+                resultDisplay.innerHTML = `<p>Result added successfully for ${studentName}.</p>`;
+
+                // Clear form fields
+                document.getElementById('addResultForm').reset();
+            });
+        });
+    </script>
+</body>
+</html>
